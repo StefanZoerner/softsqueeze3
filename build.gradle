@@ -1,12 +1,50 @@
 apply plugin: 'java'
+apply plugin: 'sonar-runner'
+apply plugin: 'jacoco'
 
-sourceCompatibility = 1.5
-version = '1.0'
+sourceCompatibility = 1.6
+version = '3.3b'
+
+test {
+    jacoco {
+        append = false
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpFile = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+sonarRunner {
+    sonarProperties {
+        property 'sonar.jdbc.url', 'jdbc:mysql://localhost:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true'
+        property 'sonar.jdbc.driverClassName', 'com.mysql.jdbc.Driver'
+        property 'sonar.projectVersion', "${version}"
+    }
+}
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
+    compile name: 'ostermillerutils_1_03_00'
+    compile name: 'jnlp'
+    compile name: 'jflac-1.2'
+    compile name: 'nativeskin'
+    compile name: 'nativeskinlib'
+    compile name: 'jsch-20040429'
+    compile name: 'log4j-1.2.8'
+    compile name: 'vorbisspi1.0.2'
+
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
